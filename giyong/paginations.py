@@ -1,7 +1,6 @@
 from django.core.paginator import Paginator
 from rest_framework import pagination
-
-from lastorder.responses import LastorderResponse
+from giyong.responses import Response
 
 
 class RawPageNumberPagination(Paginator):

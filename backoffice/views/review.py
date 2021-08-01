@@ -1,37 +1,36 @@
 from rest_framework import viewsets, generics, permissions
-from backoffice.models import Members
-from backoffice.serializers.member import MemberSerializer
+from backoffice.models import Members, Reviews
+from backoffice.serializers import ReviewListSerializer
 from giyong.responses import Response
 
 
 class ReviewListViewSet(viewsets.GenericViewSet):
+
     """
     포스팅관리 리뷰
     """
-    # model = Reviews;
-    model = Members;
-    # permission_classes = (TokenHasScope,)
-    serializer_class = MemberSerializer
+    model = Reviews;
+    serializer_class = ReviewListSerializer
+
     def get_queryset(self):
-        queryset = self.model.objects.get(id=389833)
-        #     self.model.objects.prefetch_related(
-        #         "reviewimage_set", "item__itemimages_set"
-        #     )용
-        #         .select_related(
-        #         "item", "item__shop", "item__item_number", "member", "review_parent"
-        #     )[:10]
-        # )
+        queryset = self.model.objects.filter(deleted_at=None, parent=None)
         return queryset
 
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, {"request": request})
+        queryset = self.get_queryset().prefetch_related(
+            "reviewimage_set"
+        ).select_related(
+            "item", "review_parent", "member"
+        )[:100]
 
-        serializer.is_valid(raise_exception=True)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
         # page = self.paginate_queryset(queryset)
-        # serializer = BackOfiiceReviewSerializer(
-        #     queryset, context={"request": request}, many=True
-        # )
+
         # if page is not None:
         #     serializer = self.get_serializer(page, many=True)
         #     return self.get_paginated_response(serializer.data)
