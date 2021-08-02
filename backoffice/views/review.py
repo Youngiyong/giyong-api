@@ -1,6 +1,7 @@
 from rest_framework import viewsets, generics, permissions
 from backoffice.models import Members, Reviews
 from backoffice.serializers import ReviewListSerializer
+from giyong.paginations import BackOfficePaginator
 from giyong.responses import Response
 
 
@@ -23,20 +24,13 @@ class ReviewListViewSet(viewsets.GenericViewSet):
             "item", "review_parent", "member"
         )[:100]
 
+        pageNumber = int(request.GET.get("page", 1) or 1)
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        paginator = BackOfficePaginator(queryset, 25)
+        page = paginator.page(pageNumber)
+
+
         serializer = self.get_serializer(queryset, many=True)
-        # page = self.paginate_queryset(queryset)
 
+        return Response(data=serializer.data, page=page.paginator)
         # if page is not None:
-        #     serializer = self.get_serializer(page, many=True)
-        #     return self.get_paginated_response(serializer.data)
-        # print(page)
-        # serializer = ReviewListSerializer(
-        #     queryset, context={"request": request}, many=True
-        # )
-
-        return Response(data=serializer.data)
