@@ -22,15 +22,11 @@ class ReviewListViewSet(viewsets.GenericViewSet):
             "reviewimage_set"
         ).select_related(
             "item", "review_parent", "member"
-        )[:100]
+        )[:666]
+        # pageLimit = int(request.GET.get("limit", 25) or 25)
+        page = self.paginate_queryset(queryset)
 
-        pageNumber = int(request.GET.get("page", 1) or 1)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
-        paginator = BackOfficePaginator(queryset, 25)
-        page = paginator.page(pageNumber)
-
-
-        serializer = self.get_serializer(queryset, many=True)
-
-        return Response(data=serializer.data, page=page.paginator)
-        # if page is not None:

@@ -10,46 +10,24 @@ class Response(JsonResponse):
 
     def __init__(
             self,
-            status=200,
-            title="",
-            data="",
-            msg="",
+            items="",
+            pagination=None,
             code="S0000",
-            count=None,
-            has_next=None,
-            page=None,
-            encoder=DjangoJSONEncoder,
-            safe=False,
             **kwargs
     ):
 
         response_data = {}
-        if title:
-            response_data["title"] = title
-        if data:
-            response_data["data"] = data
-
-        if msg:
-            response_data["msg"] = msg
+        if pagination is not None:
+            response_data["pagination"] = pagination
 
         if code:
             response_data["code"] = code
 
-        if count is not None:
-            response_data["count"] = count
-
-        if has_next is not None:
-            response_data["has_next"] = has_next
-
-        if page is not None:
-            response_data["page"] = page
-
+        if items:
+            response_data["data"] = items
 
         super().__init__(
             response_data,
-            encoder=encoder,
-            status=status,
-            safe=safe,
             **kwargs
         )
 
