@@ -7,6 +7,9 @@ from backoffice.models import (
     ReviewImage,
     SiteGoods, Members
 )
+from giyong import settings
+
+
 class ReviewMemberSerializer(serializers.ModelSerializer):
     cp = serializers.CharField(source="mobile")
     class Meta:
@@ -19,11 +22,17 @@ class ReviewItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'delivery_type']
 
 class ReviewImageSerializer(serializers.ModelSerializer):
-    sort = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = ReviewImage
-        fields = ["id", "original", "sort"]
+        fields = ["id", "review_id", "original"]
+
+    def to_representation(self, instance):
+        res = super(ReviewImageSerializer, self).to_representation(instance)
+
+        res['original'] = "/"+res['original'].lstrip(settings.GIYONG["CDN"])
+        print(res['original'])
+        return res
 
 
 class ReviewChildrenSerializer(serializers.ModelSerializer):
