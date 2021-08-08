@@ -25,3 +25,4 @@ class ReviewFilter(filters.FilterSet):
         if value is True:
             queryset = queryset.filter(review_parent__isnull=True)
         return queryset
+

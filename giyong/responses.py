@@ -10,21 +10,22 @@ class BackOfficeResponse(JsonResponse):
 
     def __init__(
             self,
-            items="",
-            pagination=None,
+            data="",
+            pagination="",
             code="S0000",
             **kwargs
     ):
 
         response_data = {}
-        if pagination is not None:
-            response_data["pagination"] = pagination
 
         if code:
             response_data["code"] = code
 
-        if items:
-            response_data["data"] = items
+        if data:
+            response_data["data"] = data
+
+        if pagination:
+            response_data["pagination"] = pagination
 
         super().__init__(
             response_data,
@@ -32,7 +33,7 @@ class BackOfficeResponse(JsonResponse):
         )
 
 
-class BacfOfficeErrorResponse(BackOfficeResponse):
+class BackOfficeErrorResponse(BackOfficeResponse):
     """
     error response
     """
@@ -44,6 +45,7 @@ class BacfOfficeErrorResponse(BackOfficeResponse):
             code="",
             encoder=DjangoJSONEncoder,
             safe=False,
+            json_dumps_params={"ensure_ascii": True},
             **kwargs
     ):
         super().__init__(
@@ -52,11 +54,12 @@ class BacfOfficeErrorResponse(BackOfficeResponse):
             encoder=encoder,
             status=status,
             safe=safe,
+            json_dumps_params=json_dumps_params,
             **kwargs
         )
 
 
-class BackOfficeExceptionResponse(BacfOfficeErrorResponse):
+class BackOfficeExceptionResponse(BackOfficeErrorResponse):
     """
     error response
     """
