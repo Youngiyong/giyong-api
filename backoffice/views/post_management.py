@@ -1,7 +1,7 @@
 
 from rest_framework import viewsets, generics, permissions
 
-from giyong.responses import BackOfficeResponse, BacfOfficeErrorResponse
+from giyong.responses import BackOfficeResponse, BackOfficeException
 from backoffice.serializers.post import PostListSerializer
 from backoffice.serializers.board import BoardListSerializer, BoardSerializer
 from backoffice.models import Reviews, Post, Board
@@ -99,6 +99,7 @@ class ReviewListViewSet(viewsets.GenericViewSet):
     """
     리뷰 보여짐 여부 업데이트
     """
+
     def updateVisible(self, request, *args, **kwargs):
         data = request.data
         try:
@@ -107,28 +108,21 @@ class ReviewListViewSet(viewsets.GenericViewSet):
             instance.save()
 
         except Reviews.DoesNotExist:
-            raise BacfOfficeErrorResponse(code="S0010", msg="등록되지 않은 리뷰 번입니다.")
-        except Exception as err:
-            raise BacfOfficeErrorResponse(code="S0010", msg=str(err))
+            raise BackOfficeException(code="S0010", detail="등록되지 않은 리뷰 번호입니다.")
 
         return BackOfficeResponse()
 
-    """
-    리뷰 삭제
-    """
     def destroy(self, request, *args, **kwargs):
         data = request.data
+
         try:
             instance = self.model.objects.get(id=data.get('id'))
             instance.delete()
 
         except Reviews.DoesNotExist:
-            raise BacfOfficeErrorResponse(code="S0010", msg="등록되지 않은 리뷰 번입니다.")
-        except Exception as err:
-            raise BacfOfficeErrorResponse(code="S0010", msg=str(err))
+            raise BackOfficeException(code="S0010", detail="등록되지 않은 리뷰 번호입니다")
 
         return BackOfficeResponse()
-
     """
     리뷰 리스트
     """
@@ -211,18 +205,16 @@ class PostListViewSet(viewsets.GenericViewSet):
     """
     단일 조회
     """
+
     def retrieve(self, request, *args, **kwargs):
-        try:
-            board_id = self.request.GET.get("board_id")
-            instance = Board.objects.get(id=board_id)
+        board_id = self.request.GET.get("board_id")
 
-            serializer = BoardSerializer(instance)
+        instance = Board.objects.select_related("section_code").filter(id=board_id).first()
 
-        except Reviews.DoesNotExist:
-            raise BacfOfficeErrorResponse(code="S0010", msg="등록되지 않은 보드 번호 입니다.")
-        except Exception as err:
-            raise BacfOfficeErrorResponse(code="S0010", msg=str(err))
+        if instance is None:
+            raise BackOfficeException(code="S0010", detail="등록되지 않은 보드 번호입니다")
 
+        serializer = BoardSerializer(instance)
         return BackOfficeResponse(data=serializer.data)
 
     """
