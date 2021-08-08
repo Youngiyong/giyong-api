@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from backoffice.models import SiteGoods
 from backoffice.serializers.item import ItemSerializer
-from giyong.responses import Response
+from giyong.responses import BackOfficeResponse
 
 class ItemListViewSet(viewsets.GenericViewSet):
     """
@@ -19,4 +19,4 @@ class ItemListViewSet(viewsets.GenericViewSet):
 
         serializer.is_valid(raise_exception=True)
 
-        return Response(data=serializer.data)
+        return BackOfficeResponse(data=serializer.data)

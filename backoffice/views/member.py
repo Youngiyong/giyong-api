@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from backoffice.models import Members
 from backoffice.serializers.member import MemberSerializer
-from giyong.responses import Response
+from giyong.responses import BackOfficeResponse
 
 
 class MemberViewSet(viewsets.GenericViewSet):
@@ -21,4 +21,4 @@ class MemberViewSet(viewsets.GenericViewSet):
 
         serializer.is_valid(raise_exception=True)
 
-        return Response(data=serializer.data)
+        return BackOfficeResponse(data=serializer.data)

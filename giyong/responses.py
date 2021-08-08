@@ -3,7 +3,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 
 
-class Response(JsonResponse):
+class BackOfficeResponse(JsonResponse):
     """
     response
     """
@@ -32,7 +32,7 @@ class Response(JsonResponse):
         )
 
 
-class ErrorResponse(Response):
+class BacfOfficeErrorResponse(BackOfficeResponse):
     """
     error response
     """
@@ -56,7 +56,7 @@ class ErrorResponse(Response):
         )
 
 
-class ExceptionResponse(ErrorResponse):
+class BackOfficeExceptionResponse(BacfOfficeErrorResponse):
     """
     error response
     """
