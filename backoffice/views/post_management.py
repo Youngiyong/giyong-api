@@ -3,7 +3,7 @@ from rest_framework import viewsets, generics, permissions
 
 from giyong.responses import BackOfficeResponse, BacfOfficeErrorResponse
 from backoffice.serializers.post import PostListSerializer
-from backoffice.serializers.board import BoardListSerializer
+from backoffice.serializers.board import BoardListSerializer, BoardSerializer
 from backoffice.models import Reviews, Post, Board
 from giyong.paginations import Pagination
 
@@ -96,6 +96,9 @@ class ReviewListViewSet(viewsets.GenericViewSet):
         queryset = self.model.objects.filter(deleted_at=None, parent=None)
         return queryset
 
+    """
+    리뷰 보여짐 여부 업데이트
+    """
     def updateVisible(self, request, *args, **kwargs):
         data = request.data
         try:
@@ -110,6 +113,9 @@ class ReviewListViewSet(viewsets.GenericViewSet):
 
         return BackOfficeResponse()
 
+    """
+    리뷰 삭제
+    """
     def destroy(self, request, *args, **kwargs):
         data = request.data
         try:
@@ -123,6 +129,9 @@ class ReviewListViewSet(viewsets.GenericViewSet):
 
         return BackOfficeResponse()
 
+    """
+    리뷰 리스트
+    """
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset().prefetch_related(
             "reviewimage_set"
@@ -199,6 +208,26 @@ class PostListViewSet(viewsets.GenericViewSet):
         queryset = self.model.objects.filter(deleted_at=None).order_by("-id")
         return queryset
 
+    """
+    단일 조회
+    """
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            board_id = self.request.GET.get("board_id")
+            instance = Board.objects.get(id=board_id)
+
+            serializer = BoardSerializer(instance)
+
+        except Reviews.DoesNotExist:
+            raise BacfOfficeErrorResponse(code="S0010", msg="등록되지 않은 보드 번호 입니다.")
+        except Exception as err:
+            raise BacfOfficeErrorResponse(code="S0010", msg=str(err))
+
+        return BackOfficeResponse(data=serializer.data)
+
+    """
+    리스트 조회
+    """
     def list(self, request, *args, **kwargs):
         board_id = self.request.GET.get("board_id", 1)
 

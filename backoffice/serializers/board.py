@@ -4,6 +4,13 @@ from backoffice.models import (
     Board, Codes
 )
 
+class BoardSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Board
+        fields = "__all__"
+
+
 class CodeSerializer(serializers.ModelSerializer):
 
     class Meta:
