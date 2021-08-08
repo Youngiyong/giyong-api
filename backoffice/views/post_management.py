@@ -1,7 +1,7 @@
 
 from rest_framework import viewsets, generics, permissions
 
-from giyong.responses import BackOfficeResponse
+from giyong.responses import BackOfficeResponse, BacfOfficeErrorResponse
 from backoffice.serializers.post import PostListSerializer
 from backoffice.serializers.board import BoardListSerializer
 from backoffice.models import Reviews, Post, Board
@@ -95,6 +95,33 @@ class ReviewListViewSet(viewsets.GenericViewSet):
     def get_queryset(self):
         queryset = self.model.objects.filter(deleted_at=None, parent=None)
         return queryset
+
+    def updateVisible(self, request, *args, **kwargs):
+        data = request.data
+        try:
+            instance = self.model.objects.get(id=data.get('id'))
+            instance.is_visible = data.get('is_visible')
+            instance.save()
+
+        except Reviews.DoesNotExist:
+            raise BacfOfficeErrorResponse(code="S0010", msg="등록되지 않은 리뷰 번입니다.")
+        except Exception as err:
+            raise BacfOfficeErrorResponse(code="S0010", msg=str(err))
+
+        return BackOfficeResponse()
+
+    def destroy(self, request, *args, **kwargs):
+        data = request.data
+        try:
+            instance = self.model.objects.get(id=data.get('id'))
+            instance.delete()
+
+        except Reviews.DoesNotExist:
+            raise BacfOfficeErrorResponse(code="S0010", msg="등록되지 않은 리뷰 번입니다.")
+        except Exception as err:
+            raise BacfOfficeErrorResponse(code="S0010", msg=str(err))
+
+        return BackOfficeResponse()
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset().prefetch_related(
