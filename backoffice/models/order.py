@@ -23,11 +23,11 @@ class Order(models.Model):
     pay_method = models.CharField(max_length=1, help_text="결제방법")
     pay_bank = models.CharField(max_length=50, help_text="결제은행")
 
-    total_item = models.IntegerField(blank=True, null=True, default=0, help_text="상품 가격 합계 (할인X)")
+    total_item = models.IntegerField(blank=True, null=True, default=0, help_text="상품 가격 합계")
     total_delivery = models.IntegerField(default=0, help_text="(기본 배송/배달비 + 추가 배송/배달비)")
     subtotal_delivery = models.IntegerField(default=0, help_text="기본 배송/배달비")
     subtotal_delivery_extra = models.IntegerField(default=0, help_text="추가 배송/배달비")
-    total_point = models.IntegerField(default=0, help_text="사용한 총 포인트 (라오포인트 + 외부포인트)")
+    total_point = models.IntegerField(default=0, help_text="사용한 총 포인트")
     subtotal_point_out = models.IntegerField(default=0, help_text="사용한 외부포인트")
     subtotal_point_lastorder = models.IntegerField(default=0, help_text="사용한 라오포인트")
     total_purchase = models.IntegerField(default=0, help_text="총 금액")
