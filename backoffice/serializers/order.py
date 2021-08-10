@@ -1,22 +1,18 @@
 from rest_framework import serializers
-#
-from lastorder.models import (
-    OrderShippings, OrderItems, OrderShippingLog, OrderShippingAddress, SiteOrder, SiteGoods
-)
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = OrderItems
-        fields = "__all__"
+    pass
+    # class Meta:
+    #     model = OrderItems
+    #     fields = "__all__"
 
 class OrderSerializer(serializers.ModelSerializer):
-
-
-    class Meta:
-        model = OrderShippings
-        fields = "__all__"
+    pass
+    #
+    # class Meta:
+    #     model = OrderShippings
+    #     fields = "__all__"
 #
 # class OrderShippingListSerializer(OrderShippingSerializer):
 #
